@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<div id="container"></div>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+<script>
+var detalles;
+
+$.getJSON( "estructura.json", function( data ) {
+  var items = [];
+  var title;
+  var year;
+  var image;
+  var str;
+  var website;
+  
+  detalles = "<div id='detalles' style='display: none;'>";
+  
+  $.each( data, function( key, val ) {
+	if ((key != 'Poster') && (val != "")){
+		detalles += val;
+	}
+	
+	if (key == 'Title'){
+		title = val;
+		str = val;
+	}
+	
+	
+	if (key == 'Year'){
+		year = val;
+		str = str + " " + year;
+	}
+	
+	if (key == 'Poster'){
+		image = '<img src = "' + val + '">';
+		str = str + " " + year;
+	}
+	
+	if (key == 'Website'){
+		website = val;
+	}
+	
+  });
+  detalles +="</div>";
+ items.push( "<table><tr><td><a title ='Clic to showing details' href='#' id='mostrar' class ='jQueryBookmark'>" + str + "</a></td><tr><td>"+ detalles +"</td></tr></td></tr><tr><td><a title = '" + website+ "' href='" +website+ "'>" + image + "</td></tr></table>" );
+  $( "<ul/>", {
+    "class": "my-new-list",
+    html: items.join( "" )
+  }).appendTo( "body" );
+  
+  $("#detalles").hide();
+  
+  $('#mostrar').on( "click", function() {
+		$("#detalles").css("display", "block");
+	});
+	
+   $("a.jQueryBookmark").click(function(e){
+		e.preventDefault(); // this will prevent the anchor tag from going the user off to the link
+		var bookmarkUrl = this.href;
+		var bookmarkTitle = this.title;
+	
+		//alert(bookmarkTitle);
+		
+		if (window.sidebar) { 
+			window.sidebar.addPanel(bookmarkTitle, bookmarkUrl,"");
+		} else if( window.external || document.all) {
+			window.external.AddFavorite( bookmarkUrl, bookmarkTitle);
+		} else if(window.opera) { 
+			$("a.jQueryBookmark").attr("href",bookmarkUrl);
+			$("a.jQueryBookmark").attr("title",bookmarkTitle);
+			$("a.jQueryBookmark").attr("rel","sidebar");
+		} else { // for other browsers which does not support
+			alert('Your browser does not support this bookmark action');
+			return false;
+		}
+   });
+});
+
+</script>
